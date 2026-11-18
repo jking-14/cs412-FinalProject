@@ -3,7 +3,7 @@ class Model {
         this.transform = new Transform();
         this.mesh = meshData;
         this.color = new Vector3(1, 1, 1);
-        this.material = Materials.get("default")
+        this.material = new Material("default");
     }
 
     setScale(x, y, z) {
