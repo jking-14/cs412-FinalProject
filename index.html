@@ -24,7 +24,7 @@
       window.addEventListener("load", function () {
         gl = GLInstance("glcanvas").fFitScreen(0.95, 0.9).fClear();
 
-        gl.clearColor(1.0, 0.0, 0.0, 1.0);
+        gl.clearColor(0.15, 0.17, 0.20, 1.0);
         gl.fClear();
 
         gCamera = new Camera();
@@ -48,9 +48,6 @@
       });
 
       function onRender(dt) {
-        gl.clearColor(0.0, 1.0, 0.0, 1.0);
-        gl.fClear();
-        
         gPlayer.update(Math.min(dt, 0.05));
         gCamera.updateView();
         gl.fClear();
