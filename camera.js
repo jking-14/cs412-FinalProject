@@ -22,8 +22,20 @@ class Camera {
   }
 
   updateProjection(aspect) {
-    Matrix4.perpective(this.projectionMatrix, 75 * Math.PI / 180, aspect, 0.1, 200);
-  }
+    const fov = 75 * Math.PI / 180;
+    const near = 0.1;
+    const far = 200;
+
+    const f = 1.0 / Math.tan(fov / 2);
+    const nf = 1.0 / (near - far);
+
+    this.projectionMatrix.set([
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (far + near) * nf, -1,
+        0, 0, 2 * far * near * nf, 0
+    ]);
+}
 
   updateView() {
     const forward = this.getFront();
