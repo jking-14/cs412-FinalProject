@@ -16,8 +16,7 @@ class Environment {
       0, 1, 0,
       0, 1, 0,
       0, 1, 0,
-      0, 1, 0,
-      0, 1, 0];
+      0, 1, 0,];
 
     const mesh = gl.fCreateMeshVAO("floor", indices, vertices, normals, null);
 
