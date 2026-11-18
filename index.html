@@ -48,6 +48,9 @@
       });
 
       function onRender(dt) {
+        gl.clearColor(0.0, 1.0, 0.0, 1.0);
+        gl.fClear();
+        
         gPlayer.update(Math.min(dt, 0.05));
         gCamera.updateView();
         gl.fClear();
