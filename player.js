@@ -20,7 +20,7 @@ class Player {
     });
 
     document.addEventListener("keyup", (e) => {
-      this.keys = {};
+      this.keys[e.code] = false;
     });
 
     window.addEventListener("blur", () => {
@@ -67,8 +67,8 @@ class Player {
     }
 
     if (this.keys["KeyD"]) {
-      movement.x -= right.x;
-      movement.z -= right.z;
+      movement.x += right.x;
+      movement.z += right.z;
     }
 
     if (this.keys["KeyA"]) {
