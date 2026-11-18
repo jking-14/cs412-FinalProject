@@ -30,7 +30,7 @@ class Camera {
     const right = this.getRight();
     const up = Vector3.cross(right, forward);
 
-    const pos = this.position;
+    const p = this.position;
 
     this.viewMatrix.set([right.x, up.x, -forward.x, 0,
                          right.y, up.y, -forward.y, 0,
