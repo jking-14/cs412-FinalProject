@@ -189,3 +189,14 @@ class ShaderUtil {
         };
     }
 }
+
+out vec4 fragColor;
+
+void main() {
+    vec2 coord = vWorldPosition.xz;
+
+    vec2 grid = abs( fract(coord - 0.5) - 0.5) / max(fwidth(coord), vec2(0.0001));
+
+    float line = min(grid.x, grid.y);
+    float brightness = mix( 0.65, 1.0, min(line, 1.0));
+}`;
