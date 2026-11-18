@@ -6,7 +6,7 @@ class Camera {
     this.elevation = 0;
 
     this.viewMatrix = new Float32Array(16);
-    this.projectionMat = new Float32Array(16);
+    this.projectionMatrix = new Float32Array(16);
   }
 
   getFront() {
@@ -22,7 +22,7 @@ class Camera {
   }
 
   updateProjection(aspect) {
-    Matrix4.perpective(this.projectionMat, 75 * Math.PI / 180, aspect, 0.1, 200);
+    Matrix4.perpective(this.projectionMatrix, 75 * Math.PI / 180, aspect, 0.1, 200);
   }
 
   updateView() {
