@@ -190,13 +190,57 @@ class ShaderUtil {
     }
 }
 
+
+const environmentVertexShader = `#version 300 es
+
+in vec3 aPosition;
+
+uniform mat4 uPMatrix;
+uniform mat4 uMVMatrix;
+uniform mat4 uCameraMatrix;
+
+out vec3 vWorldPosition;
+
+void main() {
+    vec4 worldPosition =
+        uMVMatrix * vec4(aPosition, 1.0);
+
+    vWorldPosition = worldPosition.xyz;
+
+    gl_Position =
+        uPMatrix *
+        uCameraMatrix *
+        worldPosition;
+}
+`;
+
+const environmentFragmentShader = `#version 300 es
+
+precision highp float;
+
+in vec3 vWorldPosition;
+
+uniform vec3 uColor;
+
 out vec4 fragColor;
 
 void main() {
     vec2 coord = vWorldPosition.xz;
 
-    vec2 grid = abs( fract(coord - 0.5) - 0.5) / max(fwidth(coord), vec2(0.0001));
+    vec2 grid = abs(
+        fract(coord - 0.5) - 0.5
+    ) / max(fwidth(coord), vec2(0.0001));
 
     float line = min(grid.x, grid.y);
-    float brightness = mix( 0.65, 1.0, min(line, 1.0));
-}`;
+
+    float brightness = mix(
+        0.65, 1.0, min(line, 1.0)
+    );
+
+    fragColor = vec4(
+        uColor * brightness,
+        1.0
+    );
+}
+`;
+
