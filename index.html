@@ -1,1 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>CS 412/512 Final Project</title>
+    <script src="textures_util.js"></script>
+    <script src="gl.js"></script>
+    <script src="math.js"></script>
+    <script src="shaders.js"></script>
+    <script src="render_loop.js"></script>
+    <script src="transform.js"></script>
+    <script src="material.js"></script>
+    <script src="model.js"></script>
+    <script src="camera.js"></script>
+    <script src="player.js"></script>
+    <script src="environment.js"></script>
+    <script>
+      var gl, gRenderLoop, gShader;
+      var gModels = [];
 
+      var gCamera, gPlayer;
+      var gColorLocation;
+
+      window.addEventListener("load", function () {
+        gl = GLInstance("glcanvas").fFitScreen(0.95, 0.9).fClear();
+
+        gl.clearColor(0.15, 0.17, 0.20, 1.0);
+        gl.fClear();
+
+        gCamera = new Camera();
+
+        gCamera.updateProjection(gl.canvas.width / gl.canvas.height);
+
+        gPlayer = new Player(gCamera, gl.canvas);
+
+        gShader = new Shader(gl, environmentVertexShader, environmentFragmentShader);
+
+        gColorLocation = gl.getUniformLocation(gShader.program, "uColor");
+
+        gModels.push(Environment.createFloor(gl, 100));
+
+        window.addEventListener("resize", () => {
+          gl.fFitScreen(0.95, 0.9);
+          gCamera.updateProjection(gl.canvas.width / gl.canvas.height);
+        });
+        
+        gRenderLoop = new RenderLoop(onRender).start();
+      });
+
+      function onRender(dt) {
+        gPlayer.update(Math.min(dt, 0.05));
+        gCamera.updateView();
+        gl.fClear();
+        gShader.activate().setPerspective(gCamera.projectionMatrix).setCameraMatrix(gCamera.viewMatrix);
+
+        for (const model of gModels) {
+          gl.uniform3fv(gColorLocation, model.color.getFloatArray());
+          gShader.renderModel(model.preRender());
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="canvasContainer">
+      <canvas id="glcanvas"></canvas>
+    </div>
+  </body>
+</html>
