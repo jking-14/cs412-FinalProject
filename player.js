@@ -56,7 +56,7 @@ class Player {
 
     const movement = new Vector3();
 
-    if (this.keys["keyW"]) {
+    if (this.keys["KeyW"]) {
       movement.x += forward.x;
       movement.z += forward.z;
     }
