@@ -51,7 +51,7 @@ class Player {
       return;
     }
 
-    const forward = this.camera.getFlatForward();
+    const forward = this.camera.getFlatFront();
     const right = this.camera.getRight();
 
     const movement = new Vector3();
