@@ -1,0 +1,3 @@
+function primsLevelMaker(numRooms, difficulty) {
+    
+}
