@@ -12,6 +12,9 @@ class LightingSystem {
 
         this.time = 0.0;
 
+        // Light source visualization
+        this.debug = new LightingDebug(gl);
+
         // Cache shader uniform locations
         this.uniformCache = new Map();
 
@@ -76,6 +79,21 @@ class LightingSystem {
 
     setEnabled(value) {
         this.enabled = value;
+        return this;
+    }
+
+    setDebugMode(value) {
+        this.debug.setEnabled(value);
+        return this;
+    }
+
+    setDebugRadius(value) {
+        this.debug.setRadius(value);
+        return this;
+    }
+
+    renderDebug(shader) {
+        this.debug.render(shader, this);
         return this;
     }
 

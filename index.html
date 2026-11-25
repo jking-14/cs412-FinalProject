@@ -16,6 +16,7 @@
     <script src="environment.js"></script>
     <!-- Lighting system -->
     <script src="lighting/light.js"></script>
+    <script src="lighting/lighting_debug.js"></script>
     <script src="lighting/lighting_system.js"></script>
     <script src="lighting/lighting_shaders.js"></script>
     <script>
@@ -47,12 +48,15 @@
         gLighting = new LightingSystem(gl);
 
         gLighting
+            .setEnabled(true)
             .setAmbientColor(1.0, 1.0, 1.0)
-            .setAmbientIntensity(0.05);
-
+            .setAmbientIntensity(0.05)
+            .setDebugMode(true)
+            .setDebugRadius(0.15);
+        
         // Temporary test light
         const testLight = new Light(LightType.POINT)
-            .setPosition(0, 3, 0)
+            .setPosition(0, 10, -5)
             .setColor(1.0, 1.0, 1.0)
             .setIntensity(2.0)
             .setRange(15.0);
@@ -86,15 +90,19 @@
 
         gLighting.addLight(moonLight);
 
-        // Temporarily disable point lights
-        //testLight.setEnabled(false);
-        //warmLight.setEnabled(false);
-        //coolLight.setEnabled(false);
+        // Disable/Enable point lights
+        testLight.setEnabled(true);
+        warmLight.setEnabled(true);
+        coolLight.setEnabled(true);
 
-        // Temporarily disable directional lights
+        // Disable/Enable directional lights
         moonLight.setEnabled(false);
 
-        //gModels.push(Environment.createFloor(gl, 100));
+        // Hide the debug shpere (Warm Point)
+        gLighting.lights[1].setVisible(true);
+
+        // Hide the debug shpere (White/Test Point)
+        gLighting.lights[0].setVisible(true);
 
         const floor = Environment.createFloor(gl, 100);
 
@@ -114,18 +122,6 @@
         gRenderLoop = new RenderLoop(onRender).start();
       });
 
-      //function onRender(dt) {
-      //  gPlayer.update(Math.min(dt, 0.05));
-      //  gCamera.updateView();
-      //  gl.fClear();
-      //  gShader.activate().setPerspective(gCamera.projectionMatrix).setCameraMatrix(gCamera.viewMatrix);
-
-      //  for (const model of gModels) {
-      //    gl.uniform3fv(gColorLocation, model.color.getFloatArray());
-      //    gShader.renderModel(model.preRender());
-      //  }
-      //}
-
     function onRender(dt) {
         gPlayer.update(Math.min(dt, 0.05));
         gCamera.updateView();
@@ -138,6 +134,8 @@
             gLighting.applyMaterial(gShader, model);
             gShader.renderModel(model.preRender());
         }
+
+        gLighting.renderDebug(gShader);
     }
     </script>
   </head>

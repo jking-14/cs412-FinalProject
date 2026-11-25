@@ -9,6 +9,7 @@ class Light {
     constructor(type = LightType.POINT) {
         this.type = type;
         this.enabled = true;
+        this.visible = true;
 
         // Spatial properties
         this.position = new Vector3(0, 0, 0);
@@ -56,6 +57,11 @@ class Light {
 
     setEnabled(value) {
         this.enabled = value;
+        return this;
+    }
+    
+    setVisible(value) {
+        this.visible = value;
         return this;
     }
 
