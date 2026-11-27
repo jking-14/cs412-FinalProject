@@ -14,12 +14,18 @@
     <script src="camera.js"></script>
     <script src="player.js"></script>
     <script src="environment.js"></script>
+    <!-- Lighting system -->
+    <script src="lighting/light.js"></script>
+    <script src="lighting/lighting_debug.js"></script>
+    <script src="lighting/lighting_system.js"></script>
+    <script src="lighting/lighting_shaders.js"></script>
     <script>
       var gl, gRenderLoop, gShader;
       var gModels = [];
 
       var gCamera, gPlayer;
-      var gColorLocation;
+      //var gColorLocation;
+      var gLighting;
 
       window.addEventListener("load", function () {
         gl = GLInstance("glcanvas").fFitScreen(0.95, 0.9).fClear();
@@ -33,11 +39,80 @@
 
         gPlayer = new Player(gCamera, gl.canvas);
 
-        gShader = new Shader(gl, environmentVertexShader, environmentFragmentShader);
+        //gShader = new Shader(gl, environmentVertexShader, environmentFragmentShader);
+        gShader = new Shader(gl, lightingVertexShader, lightingFragmentShader);
 
-        gColorLocation = gl.getUniformLocation(gShader.program, "uColor");
+        //gColorLocation = gl.getUniformLocation(gShader.program, "uColor");
 
-        gModels.push(Environment.createFloor(gl, 100));
+        // Initialize lighting system
+        gLighting = new LightingSystem(gl);
+
+        gLighting
+            .setEnabled(true)
+            .setAmbientColor(1.0, 1.0, 1.0)
+            .setAmbientIntensity(0.05)
+            .setDebugMode(true)
+            .setDebugRadius(0.15);
+        
+        // Temporary test light
+        const testLight = new Light(LightType.POINT)
+            .setPosition(0, 10, -5)
+            .setColor(1.0, 1.0, 1.0)
+            .setIntensity(2.0)
+            .setRange(15.0);
+
+        gLighting.addLight(testLight);
+
+        // Warm point light
+        const warmLight = new Light(LightType.POINT)
+            .setPosition(-5, 2, -5)
+            .setColor(1.0, 0.35, 0.1)
+            .setIntensity(3.0)
+            .setRange(12.0);
+
+        gLighting.addLight(warmLight);
+
+
+        // Cool point light
+        const coolLight = new Light(LightType.POINT)
+            .setPosition(5, 2, -5)
+            .setColor(0.15, 0.35, 1.0)
+            .setIntensity(3.0)
+            .setRange(12.0);
+
+        gLighting.addLight(coolLight);
+
+        // Directional moonlight
+        const moonLight = new Light(LightType.DIRECTIONAL)
+            .setDirection(-0.4, -1.0, -0.3)
+            .setColor(0.35, 0.45, 0.8)
+            .setIntensity(0.3);
+
+        gLighting.addLight(moonLight);
+
+        // Disable/Enable point lights
+        testLight.setEnabled(true);
+        warmLight.setEnabled(true);
+        coolLight.setEnabled(true);
+
+        // Disable/Enable directional lights
+        moonLight.setEnabled(false);
+
+        // Hide the debug shpere (Warm Point)
+        gLighting.lights[1].setVisible(true);
+
+        // Hide the debug shpere (White/Test Point)
+        gLighting.lights[0].setVisible(true);
+
+        const floor = Environment.createFloor(gl, 100);
+
+        floor.useGrid = true;
+
+        floor.material
+            .setSpecularStrength(0.05)
+            .setShininess(8);
+
+        gModels.push(floor);
 
         window.addEventListener("resize", () => {
           gl.fFitScreen(0.95, 0.9);
@@ -47,17 +122,21 @@
         gRenderLoop = new RenderLoop(onRender).start();
       });
 
-      function onRender(dt) {
+    function onRender(dt) {
         gPlayer.update(Math.min(dt, 0.05));
         gCamera.updateView();
+        gLighting.update(dt); // Update lighting system
         gl.fClear();
         gShader.activate().setPerspective(gCamera.projectionMatrix).setCameraMatrix(gCamera.viewMatrix);
+        gLighting.apply(gShader, gCamera); // Upload global lighting properties
 
         for (const model of gModels) {
-          gl.uniform3fv(gColorLocation, model.color.getFloatArray());
-          gShader.renderModel(model.preRender());
+            gLighting.applyMaterial(gShader, model);
+            gShader.renderModel(model.preRender());
         }
-      }
+
+        gLighting.renderDebug(gShader);
+    }
     </script>
   </head>
   <body>
