@@ -5,7 +5,11 @@ class Monster {
         this.damage = 0;
         this.speed = 0;
         this.position = { x: 0, y: 0, z: 0 }; // Placeholder for the monster's position
-        this.makeMonster(sprite);
+        // Dimensions of hitbox
+    	this.hbWidth = 1.0;
+	    this.hbHeight = 2.0;
+	    this.hbDepth = 1.0;
+        this.#makeMonster(sprite);
          // Placeholder for the monster's sprite or model
 
     }
@@ -47,5 +51,31 @@ class Monster {
     }
     setPosition(x, y, z) {
         this.position = { x, y, z };
+    }
+
+    //gets the boundaries of the hitbox based off the position of the monster
+    getHitbox() {
+        return {
+            minX: this.position.x - this.hbWidth / 2,
+            maxX: this.position.x + this.hbWidth / 2,
+            
+            minY: this.position.y,
+            maxY: this.position.y + this.hbHeight,
+
+            minZ: this.position.z - this.hbDepth / 2,
+            maxZ: this.position.z + this.hbDepth / 2
+        };
+    }
+    // Collision detection, if a given point is in the hitbox this function returns true
+    containsPoint(point) {
+        const box = this.getHitbox();
+        return (
+            point.x >= box.minX &&
+            point.x <= box.maxX &&
+            point.y >= box.minY &&
+            point.y <= box.maxY &&
+            point.z >= box.minZ &&
+            point.z <= box.maxZ
+        );
     }
 }
